@@ -4,11 +4,13 @@ Content-Type: text/html
 <!DOCTYPE html>
 <html>
 <head>
-<title>Title of the document</title>
+    <title>Title of the document</title>
 </head>
 
 <body>
-Content of the document......
+<?php
+    echo "Hello World";
+?>
 </body>
 
 </html>
