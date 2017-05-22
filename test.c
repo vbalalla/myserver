@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <memory.h>
 
-int main(int argc, char const *argv[]){
+int main(int argc, char const *argv[]) {
 //    FILE *fp;
 //    char * line = NULL;
 //    size_t len = 0;
@@ -22,6 +22,17 @@ int main(int argc, char const *argv[]){
 //    fclose(fp);
 //    if (line)
 //        free(line);
+    char url[50];
+    strcpy(url,"index.php");
+    char cmd3[50];
+    char cmd[50];
+    char cmd1[] = "php -f ";
+    char cmd2[] = " > index.html";
+    strcpy(cmd3, strcat(cmd1, url+1));
+    strcpy(cmd,strcat(cmd3 , cmd2));
 
-    printf("%d", strcmp("test", "best"));
+    system(cmd);
+    printf("%s\n",cmd3);
+    printf("%s\n",cmd2);
+    printf("%s\n",cmd);
 }

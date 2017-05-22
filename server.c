@@ -22,7 +22,14 @@ char webpage[]=
                 "Content-Type: text/html; charset=UTF-8\r\n\r\n"
                 "<!DOCTYPE html>\r\n"
                 "<html><head><title>first page</title></head>\r\n"
-                "<body>first page</body></html>\r\n";
+                "<body>error page</body></html>\r\n";
+
+char error1[]=
+        "HTTP/1.0 404 Not Found\r\n"
+                "Content-Type: text/html; charset=UTF-8\r\n\r\n"
+                "<!DOCTYPE html>\r\n"
+                "<html><head><title>first page</title></head>\r\n"
+                "<body>Page Not Found</body></html>\r\n";
 
 char webpage2[]=
         "HTTP/1.1 200 OK\r\n"
@@ -78,7 +85,7 @@ int main(int argc, char const *argv[])
 
     server_addr.sin_family = AF_INET;
     server_addr.sin_addr.s_addr = INADDR_ANY;
-    server_addr.sin_port = htons(8090);
+    server_addr.sin_port = htons(8091);
 
     if(bind(fd_server, (struct sockaddr *) &server_addr, sizeof(server_addr)) == -1)
     {
@@ -129,6 +136,7 @@ int main(int argc, char const *argv[])
                 p++;
             }
             p++;
+            p++;
             int i2 = 0;
             while (*p != ' '){
                 url[i2] = *p;
@@ -142,10 +150,80 @@ int main(int argc, char const *argv[])
             printf("Method - %s \n", method);
 
 
+            int length = (int) strlen(url);
+            const char *last_four = &url[length-4];
+
+            printf("%s\n",last_four);
+
+
 
             if(!strcmp(method,"GET")){
                 int fp;
-                fp = open(url+1, O_RDONLY);
+
+                if(!strcmp(last_four,".php")){
+                    char cmd[50];
+
+                    printf("%zu\n", strlen(url));
+
+                    char cmd1[] = "php -f ";
+
+                    int i = 7;
+
+                    strcpy(cmd, cmd1);
+
+                    printf("%d\n",i);
+
+                    int j;
+                    for(j =0; j<strlen(url);j++){
+                        cmd[i] = url[j];
+                        i++;
+                    }
+                    printf("%d\n",i);
+
+                    char cmd2[] = " > temp.html";
+
+                    int k;
+                    for(k =0; k<12;k++){
+                        cmd[i] = cmd2[k];
+                        i++;
+                    }
+
+                    cmd[i] = '\0';
+
+                    for(k =0; k<30;k++){
+                        printf("%c\n",cmd[k]);
+                    }
+
+
+                    printf("%d\n",i);
+
+                    //strcpy(cmd3, strcat(cmd1, url));
+                    //strcpy(cmd, strcat(strcat(cmd1 ,url), cmd2));
+
+                    printf("%s\n",cmd1);
+                    printf("%s\n",cmd);
+
+                    int err = system(cmd);
+                    printf("%d\n",err);
+
+                    if(err == 0){
+                        fp = open("temp.html", O_RDONLY);
+                    }
+                    else if(err == 256){
+                        write(fd_client, error1, sizeof(webpage) - 1);
+                        close(fd_client);
+                    } else{
+                        write(fd_client, webpage, sizeof(webpage) - 1);
+                        close(fd_client);
+                    }
+
+
+                }
+                else{
+                    fp = open(url, O_RDONLY);
+                }
+
+
 //              FILE * fp3 = fdopen(fp2, O_RDONLY);
 //              fseek(fp3, 0L, SEEK_END);
 //              double sz = ftell(fp3);
@@ -154,7 +232,7 @@ int main(int argc, char const *argv[])
 
                 if(fp == -1){
                     //printf(webpage);
-                    write(fd_client, webpage, sizeof(webpage) - 1);
+                    write(fd_client, error1, sizeof(webpage) - 1);
                     close(fd_client);
                 }
                 else if(!strcmp(url,"/")){
