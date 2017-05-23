@@ -158,7 +158,7 @@ int main(int argc, char const *argv[])
 
 
             if(!strcmp(method,"GET")){
-                int fp;
+                int fp = 0;
 
                 if(!strcmp(last_four,".php")){
                     char cmd[50];
@@ -190,9 +190,9 @@ int main(int argc, char const *argv[])
 
                     cmd[i] = '\0';
 
-                    for(k =0; k<30;k++){
-                        printf("%c\n",cmd[k]);
-                    }
+//                    for(k =0; k<30;k++){
+//                        printf("%c\n",cmd[k]);
+//                    }
 
 
                     printf("%d\n",i);
@@ -208,6 +208,10 @@ int main(int argc, char const *argv[])
 
                     if(err == 0){
                         fp = open("temp.html", O_RDONLY);
+                        //write(fd_client, "HTTP/1.1 200 OK\r\n", 17);
+                        char headContentTypePDF[]=
+                                "Content-Type: application/pdf; charset=utf-8\r\n\r\n\0";
+                        write(fd_client,headContentTypePDF, sizeof(headContentTypePDF));
                     }
                     else if(err == 256){
                         write(fd_client, error1, sizeof(webpage) - 1);
@@ -219,16 +223,37 @@ int main(int argc, char const *argv[])
 
 
                 }
+                else if(last_four, "jpeg"){
+                    fp = open(url, O_RDONLY);
+                    //write(fd_client, "HTTP/1.1 200 OK\r\n", 17);
+                    //write(fd_client, "Content-Type: image/jpeg; charset=UTF-8\r\n\r\n", 43);
+                }
+                else if(last_four, ".png"){
+                    fp = open(url, O_RDONLY);
+                    //write(fd_client, "HTTP/1.1 200 OK\r\n", 17);
+                    //write(fd_client, "Content-Type: image/png; charset=UTF-8\r\n\r\n", 43);
+                }
+                else if(last_four, ".pdf"){
+                    fp = open(url, O_RDONLY);
+                    //write(fd_client, "HTTP/1.1 200 OK\r\n", 17);
+                    write(fd_client, "Content-Type: application/pdf; charset=UTF-8\r\n\r\n", 48);
+                }
                 else{
                     fp = open(url, O_RDONLY);
+                    write(fd_client, "HTTP/1.1 200 OK\r\n", 17);
+                    write(fd_client, "Content-Type: text/html; charset=UTF-8\r\n\r\n", 43);
                 }
 
 
-//              FILE * fp3 = fdopen(fp2, O_RDONLY);
+//              FILE * fp3 = fdopen(fp, O_RDONLY);
 //              fseek(fp3, 0L, SEEK_END);
 //              double sz = ftell(fp3);
 //              rewind(fp3);
 //              printf("size - %lf\n", sz);
+
+                struct stat st;
+                stat("error.png", &st);
+                long size = st.st_size;
 
                 if(fp == -1){
                     //printf(webpage);
@@ -242,7 +267,9 @@ int main(int argc, char const *argv[])
                 else{
                     //printf(webpage2);
                     //write(fd_client, webpage2, sizeof(webpage2) - 1);
-                    sendfile(fd_client, fp, NULL, 170);
+                    //send(fd, "HTTP/1.1 200 OK\r\n");
+
+                    sendfile(fd_client, fp, NULL, (size_t) size);
                     close(fd_client);
                 }
             }

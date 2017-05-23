@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <memory.h>
+#include <fcntl.h>
+#include <sys/stat.h>
 
 int main(int argc, char const *argv[]) {
 //    FILE *fp;
@@ -22,17 +24,11 @@ int main(int argc, char const *argv[]) {
 //    fclose(fp);
 //    if (line)
 //        free(line);
-    char url[50];
-    strcpy(url,"index.php");
-    char cmd3[50];
-    char cmd[50];
-    char cmd1[] = "php -f ";
-    char cmd2[] = " > index.html";
-    strcpy(cmd3, strcat(cmd1, url+1));
-    strcpy(cmd,strcat(cmd3 , cmd2));
+    //              FILE * fp3 = fdopen(fp, O_RDONLY);
 
-    system(cmd);
-    printf("%s\n",cmd3);
-    printf("%s\n",cmd2);
-    printf("%s\n",cmd);
+    //int fp = open("error.png", O_RDONLY);
+    struct stat st;
+    stat("error.png", &st);
+    long izesize = st.st_size;
+    printf("size - %li\n",izesize);
 }

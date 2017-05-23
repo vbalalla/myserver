@@ -1,6 +1,3 @@
-HTTP/1.1 200 OK
-Content-Type: text/html
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,7 +7,12 @@ Content-Type: text/html
 <body>
 <?php
     echo "Hello World !!!";
+
 ?>
+
+<div>
+    <img src="tick.jpeg" alt="Mountain View" style="width:304px;height:228px;">
+</div>
 </body>
 
 </html>
