@@ -15,7 +15,6 @@
 #include <sys/sendfile.h>
 #include <fcntl.h>
 
-//char webpage[]= "HTTP/1.1 200 OK\\nServer: Apache-Coyote/1.1\\nPragma: no-cache";
 
 char webpage[]=
         "HTTP/1.1 200 OK\r\n"
@@ -38,35 +37,9 @@ char webpage2[]=
 int main(int argc, char const *argv[])
 {
 
-    //FILE *fp;
-    //char * line = NULL;
     size_t len = 0;
     char method[20] = {'\0'};
     char url[50] = {'\0'};
-
-
-//    fp = fopen("test.html", "r");
-//
-//    if (fp == NULL)
-//        exit(EXIT_FAILURE);
-//
-//    char *result;
-//
-//    while (getline(&line, &len, fp) != -1) {
-//        result = malloc(strlen(webpage2)+strlen(line)+1);
-//        strcpy(result, webpage2);
-//        strcat(result, line);
-//        strcpy(webpage2, result);
-//    }
-//    result = malloc(strlen(webpage2)+strlen("\r\n")+1);
-//    strcpy(result, webpage2);
-//    strcat(result, "\r\n");
-//    strcpy(webpage2, result);
-//
-//    fclose(fp);
-//    if (line)
-//        free(line);
-
 
     struct sockaddr_in server_addr, client_addr;
     socklen_t sin_len = sizeof(client_addr);
@@ -120,11 +93,6 @@ int main(int argc, char const *argv[])
             memset(buf, 0, 2048);
             read(fd_client, buf, 2047);
 
-            //printf("%s\n", buf);
-
-//            char url[17];
-//            memcpy( url, &buf, 16 );
-//            url[16] = '\0';
 
 /////////////////////////////////////////////////////////
             char *p = &buf[0];
@@ -194,30 +162,23 @@ int main(int argc, char const *argv[])
 
                     cmd[i] = '\0';
 
-//                    for(k =0; k<30;k++){
-//                        printf("%c\n",cmd[k]);
-//                    }
-
-
                     printf("%d\n",i);
-
-                    //strcpy(cmd3, strcat(cmd1, url));
-                    //strcpy(cmd, strcat(strcat(cmd1 ,url), cmd2));
-
                     printf("%s\n",cmd1);
                     printf("%s\n",cmd);
 
                     int err = system(cmd);
+
                     printf("%d\n",err);
 
                     if(err == 0){
                         fp = open("temp.html", O_RDONLY);
                         if (fp != -1){
-                            write(fd_client, "HTTP/1.1 200 OK\r\n", 17);
-                            write(fd_client, "Content-Type: text/html; charset=UTF-8\r\n\r\n", 45);
+                            char ok[] = "HTTP/1.1 200 OK\r\n";
+                            write(fd_client, ok, sizeof(ok));
+                            char headContentTypeOther[]=
+                                    "Content-Type: text/html; charset=utf-8\r\n\r\n\0";
+                            write(fd_client,headContentTypeOther, sizeof(headContentTypeOther));
                         }
-                        //write(fd_client, "HTTP/1.1 200 OK\r\n", 17);
-
                     }
                     else if(err == 256){
                         write(fd_client, error1, sizeof(webpage) - 1);
@@ -235,14 +196,7 @@ int main(int argc, char const *argv[])
                         char ok[] = "HTTP/1.1 200 OK\r\n";
                         write(fd_client, ok, sizeof(ok));
                         write(fd_client, "Content-Type: image/jpeg; charset=UTF-8\r\n\r\n", 43);
-                        //printf("done\n");
-//                        char mimeTypeJPEG[]=
-//                                "Content-Type: image/jpeg; charset=utf-8\r\n\r\n\0";
-//                        write(fd_client,mimeTypeJPEG, sizeof(mimeTypeJPEG));
                     }
-
-                    //write(fd_client, "HTTP/1.1 200 OK\r\n", 17);
-                    //write(fd_client, "Content-Type: image/jpeg; charset=UTF-8\r\n\r\n", 43);
                 }
                 else if(!strcmp(last_four, ".png")){
                     fp = open(url, O_RDONLY);
@@ -251,12 +205,7 @@ int main(int argc, char const *argv[])
                         char ok[] = "HTTP/1.1 200 OK\r\n";
                         write(fd_client, ok, sizeof(ok));
                         write(fd_client, "Content-Type: image/png; charset=UTF-8\r\n\r\n", 42);
-//                        char headContentTypePNG[]=
-//                                "Content-Type: image/png; charset=utf-8\r\n\r\n\0";
-//                        write(fd_client,headContentTypePNG, sizeof(headContentTypePNG));
                     }
-                    //write(fd_client, "HTTP/1.1 200 OK\r\n", 17);
-                    //write(fd_client, "Content-Type: image/png; charset=UTF-8\r\n\r\n", 43);
                 }
                 else if(!strcmp(last_four, ".pdf")){
                     fp = open(url, O_RDONLY);
@@ -267,29 +216,20 @@ int main(int argc, char const *argv[])
                                 "Content-Type: application/pdf; charset=utf-8\r\n\r\n\0";
                         write(fd_client,headContentTypePDF, sizeof(headContentTypePDF));
                     }
-
-                    //write(fd_client, "Content-Type: application/pdf; charset=UTF-8\r\n\r\n", 48);
                 }
                 else{
                     fp = open(url, O_RDONLY);
                     if (fp != -1){
-                        write(fd_client, "HTTP/1.1 200 OK\r\n", 17);
-                        write(fd_client, "Content-Type: text/html; charset=UTF-8\r\n\r\n", 45);
+                        char ok[] = "HTTP/1.1 200 OK\r\n";
+                        write(fd_client, ok, sizeof(ok));
+                        char headContentTypeOther[]=
+                                "Content-Type: text/html; charset=utf-8\r\n\r\n\0";
+                        write(fd_client,headContentTypeOther, sizeof(headContentTypeOther));
                     }
 
                 }
 
-
-//              FILE * fp3 = fdopen(fp, O_RDONLY);
-//              fseek(fp3, 0L, SEEK_END);
-//              double sz = ftell(fp3);
-//              rewind(fp3);
-//              printf("size - %lf\n", sz);
-
-
-
                 if(fp == -1){
-                    //printf(webpage);
                     write(fd_client, error1, sizeof(webpage) - 1);
                     close(fd_client);
                 }
@@ -300,22 +240,14 @@ int main(int argc, char const *argv[])
                 else{
                     stat(url, &st);
                     size = st.st_size;
-                    //printf(webpage2);
-                    //write(fd_client, webpage2, sizeof(webpage2) - 1);
-                    //send(fd, "HTTP/1.1 200 OK\r\n");
-
                     sendfile(fd_client, fp, NULL, (size_t) size);
                     close(fd_client);
                 }
             }
             else{
-                //printf(webpage);
                 write(fd_client, webpage, sizeof(webpage) - 1);
                 close(fd_client);
             }
-
-
-
 
             printf("closing..........\n");
             exit(0);
