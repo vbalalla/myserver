@@ -250,10 +250,10 @@ int main(int argc, char const *argv[])
                     if (fp != -1){
                         char ok[] = "HTTP/1.1 200 OK\r\n";
                         write(fd_client, ok, sizeof(ok));
-                        write(fd_client, "Content-Type: image/png; charset=UTF-8\r\n\r\n", 42);
-//                        char headContentTypePNG[]=
-//                                "Content-Type: image/png; charset=utf-8\r\n\r\n\0";
-//                        write(fd_client,headContentTypePNG, sizeof(headContentTypePNG));
+                        write(fd_client, "Content-Type: image/png; charset=UTF-8\r\n", 42);
+                        char headContentTypePNG[]=
+                                "Content-Type: image/png; charset=utf-8\r\n\r\n\0";
+                        write(fd_client,headContentTypePNG, sizeof(headContentTypePNG));
                     }
                     //write(fd_client, "HTTP/1.1 200 OK\r\n", 17);
                     //write(fd_client, "Content-Type: image/png; charset=UTF-8\r\n\r\n", 43);
